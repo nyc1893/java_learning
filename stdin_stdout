@@ -9,6 +9,6 @@ public class MyJavaP{
         String myString = scan.next();
         System.out.println(a);
         System.out.println(myString);
-        
+        scan.close();
     }
 }
