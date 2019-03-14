@@ -97,3 +97,11 @@ public class Solution {
     }
 }
 
+
+//格式化输出数字   补0
+            // 0 代表前面补充0         
+            // 3 代表长度为3         
+            // d 代表参数为正数型     
+            //x means your number
+                String str = String.format("%03d", x);         
+                System.out.println(str);     
