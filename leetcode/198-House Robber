@@ -1,0 +1,21 @@
+class Solution {
+    public int rob(int[] nums) {
+        int k = nums.length;
+        if (k==0){return 0;}
+        if (k ==1) {return nums[0];}
+        else{
+                int [] F;
+                F = new int[k+1];
+                Arrays.fill(F, 0);
+                //F[0] = 0;
+                F[1] = nums[0];
+               // F[1] = max(nums[0],nums[1]);
+                for(int i=2;i<=k;i++)
+                {
+                    F[i]=Math.max((nums[i-1]+F[i-2]),F[i-1]);
+
+                }
+                return F[k];
+            }
+    }
+}
