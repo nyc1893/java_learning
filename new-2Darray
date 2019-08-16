@@ -1,0 +1,122 @@
+//To display simple text.
+public class Program
+{
+    
+    public static int max(int num1, int num2) {
+   int result;
+   if (num1 > num2)
+      result = num1;
+   else
+      result = num2;
+ 
+   return result; 
+}
+
+  
+     public static int sum(int arr[],int a, int b) 
+    {
+        int result = 0;
+        if(a<0||b>arr.length) 
+        {
+            System.out.println("Input error.");
+        }
+        else
+        {
+            
+             for (int i=a-1;i<b;i++ )
+            {
+                result = result + arr[i];
+            }  
+        }
+        return result;
+    } 
+    
+     public static void Print(int h[][]) //printing 2D metrix
+     {
+        for (int i = 0; i < h.length; i++) 
+        {
+            for (int j = 0; j <= h[1].length - 1; j++)
+            {
+                System.out.print(h[i][j]);
+            }
+            System.out.println();
+        }
+        
+     }
+     
+          public static int MaxTwoD(int h[][]) //printing 2D metrix
+     {
+         int result=-1000;
+        for (int i = 1; i < h.length; i++) 
+        {
+            for (int j = 1; j <= h[1].length - 1; j++)
+            {
+                if(h[i][j]>result) result = h[i][j];
+                // System.out.print(h[i][j]);
+            }
+            // System.out.println();
+        }
+        return result;
+     }
+     
+     
+    public static void main(String[] args) {
+        System .out.println ("welcome to sololearn..!!!");
+        
+        
+        int i,j;
+        
+        int arr[] = {1,2,3};
+        // display(arr,1,3);
+        int F[][]=new int[arr.length+1][arr.length+1];
+        
+        for (i = 0; i <= arr.length; i++) 
+        {
+            for (j =0 ; j <= arr.length; j++)
+            {
+                F[i][j] = -1000;
+            }
+        }
+        Print(F);
+        
+         /*  
+        i = 1;
+        j=arr.length-1;
+        k=Math.max(sum(arr,i+1,j),sum(arr,i,j-1));
+        System.out.println(k);
+       */
+        
+        for(j=arr.length;j>1;j--)
+        {
+            for(i=1;i<j;i++)
+            {    
+                F[i][j]=Math.max(sum(arr,i+1,j),sum(arr,i,j-1));
+            }
+        }
+
+        Print(F);
+        
+        
+       System.out.println(MaxTwoD(F));
+        
+    }
+}
+/*
+   public static void display(int arr[],int a, int b) 
+        {
+            
+            if(a<0||b>arr.length) 
+            {System.out.println("Input error.");}
+            else{
+                 for (int i=a-1;i<b;i++ )
+                {
+                    System.out.println(arr[i]);
+                }  
+            }
+        } 
+    
+   
+    
+*/
+
+
