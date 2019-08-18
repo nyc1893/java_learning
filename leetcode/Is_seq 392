@@ -1,0 +1,30 @@
+//time limited error
+
+class Solution {
+    public boolean isSubsequence(String s, String t) {
+        int F [][] = new int[s.length()+1][t.length()+1];
+        int i,j =0;
+        for(i=0;i<s.length();i++)
+            F[i][0]=0;
+        for(j=0;j<t.length();j++)    
+            F[0][j]=0;
+        
+        for(i=1;i<s.length()+1;i++)
+        {
+            for(j=1;j<t.length()+1;j++)
+            {
+              if((s.substring(i-1,i)).equals(t.substring(j-1,j)))
+                   {
+
+                        F[i][j] =F[i-1][j-1]+1;
+                        //System.out.println ("i="+i+" "+"j="+j);
+                        //System.out.println ("dengyu");
+                   }
+               else
+                    F[i][j] =Math.max(F[i-1][j],F[i][j-1]);
+            }   
+        }
+        if( F[s.length()][t.length()] == s.length() ) return true;
+        else return false;
+    }
+}
