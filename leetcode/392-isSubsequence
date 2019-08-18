@@ -1,0 +1,25 @@
+class Solution {
+    public boolean isSubsequence(String s, String t) {
+        
+        int i = s.length();
+        int j = t.length();
+        int sum = 0;
+        while(i >0 &j>0)
+        {
+           
+            if((s.substring(i-1,i)).equals(t.substring(j-1,j)))
+            {
+                sum = sum +1;
+                i--;
+                j--;
+            }
+            else
+            {
+
+                j--;
+            }
+        }
+        if (sum==s.length()) return true;
+        else return false;
+    }
+}
