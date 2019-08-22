@@ -1,0 +1,19 @@
+class Solution {
+    public int numJewelsInStones(String J, String S) {
+        char[] jtable = J.toCharArray();
+        char[] stable = S.toCharArray();
+        int result = 0;
+        HashSet <Character>set1 = new HashSet<>();
+        for (char val :jtable)
+        {
+            set1.add(val);
+        }
+        for (int i =0; i<stable.length;i++)
+        {
+            if(set1.contains(stable[i]))
+                result++;
+                
+        }
+        return result;
+    }
+}
