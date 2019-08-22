@@ -1,0 +1,29 @@
+
+import java.util.*;
+
+public class Program
+{
+    
+    public static void main(String[] args) 
+    {
+       ArrayList<Integer> all = new ArrayList<Integer>();
+        for( int i=0;i <3;i++ ) 
+        {
+            all.add(i);
+        }
+
+         System.out.println ("Print ArrayList:");
+        for (int j = 0; j < all.size(); j++) {
+            System.out.println(all.get(j));
+        }
+        System.out.println ("Print array:");
+        Integer [] arr = all.toArray(new Integer[all.size()]);
+        for(int element:arr){
+             System.out.println(element);
+        }
+        
+        List <Integer> list = Arrays.asList(arr);
+        System.out.println(list.get(1));
+        System.out.println ("Finished\n");
+    }
+}
