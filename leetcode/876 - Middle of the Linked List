@@ -21,6 +21,7 @@ class Solution {
         {
             current = current.next;
         }
+        //it is so wield to return current instead of current.val here
         return current;
     }
 }
