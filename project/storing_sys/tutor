@@ -3,6 +3,10 @@ https://www.youtube.com/watch?v=dJv0sDW8Xl8
 https://www.runoob.com/mysql/mysql-install.html
 ps: 5jasqiekql-A
 
+修改 sql 密码：
+https://blog.csdn.net/Exception_sir/article/details/82111014
+ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';
+
 
 
 Java MySQL 连接
