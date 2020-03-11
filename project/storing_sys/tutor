@@ -1,7 +1,11 @@
 安装mysql
 https://www.youtube.com/watch?v=dJv0sDW8Xl8
 https://www.runoob.com/mysql/mysql-install.html
-ps: 5jasqiekql-A
+ps: 5jasqiekql-A    改成 123
+
+进入：
+mysql -u root -p
+
 
 修改 sql 密码：
 https://blog.csdn.net/Exception_sir/article/details/82111014
