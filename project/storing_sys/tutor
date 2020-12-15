@@ -3,8 +3,12 @@ https://www.youtube.com/watch?v=dJv0sDW8Xl8
 https://www.runoob.com/mysql/mysql-install.html
 ps: 5jasqiekql-A    改成 123
 ps: .<p.qrfer71P
-进入：
+
+
+进入sql：
+G:\mysql-8.0.19-winx64\bin
 mysql -u root -p
+密码123
 
 
 修改 sql 密码：
