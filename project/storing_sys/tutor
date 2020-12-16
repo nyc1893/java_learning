@@ -9,6 +9,8 @@ ps: .<p.qrfer71P
 G:\mysql-8.0.19-winx64\bin
 mysql -u root -p
 密码123
+use RUNOOB
+select * from test;
 
 
 修改 sql 密码：
