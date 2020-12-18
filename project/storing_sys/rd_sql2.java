@@ -1,5 +1,10 @@
 //read xls file only be attenion that the int col of input file need to be non-null;
 // otherwise it will have problem
+
+//read() is to import the custom.xls data into the CustomList table;
+//read2() is to import the product.xls data into the InventoryList table;
+
+
 package web_design;
 
 import java.io.File;
