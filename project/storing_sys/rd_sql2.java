@@ -30,14 +30,14 @@ public class rd_sql
     // 数据库的用户名与密码，需要根据自己的设置
     static final String USER = "root";
     static final String PASS = "123";
-    
+    Connection connection = null;
  
-    String filename = "./data/product.xls";
+//    String filename = "./data/product.xls";
+    String filename = "./data/custom.xls";
+//    String temp[][] = new String [2400][8];
 
-    String temp[][] = new String [2400][8];
-
-    
-    
+    String temp[][] = new String [410][9];
+    int lines = 0;
 	public static void main(String[] args) 
 	{
 		
@@ -57,8 +57,122 @@ public class rd_sql
     	return result;
 
 	}	
-    	
+    
+    public static String AddET9(String tablename,int id, String ch1,String ch2,
+    		String ch3, String ch4,String ch5,String ch6, String ch7,String ch8)
+	{
+    	String result = String.format("insert into %s values(%d,\"%s\",\"%s\""
+    			+ ",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\")",
+    			tablename,id,ch1,ch2,ch3,ch4,ch5,ch6,ch7,ch8);
+    	System.out.println(result);
+    	return result;
+
+	}	
+    
 	public void Read()  
+	{
+    		
+		try 
+		{
+        //1:创建workbook
+            Workbook workbook=Workbook.getWorkbook(new File(filename)); 
+            //2:获取第一个工作表sheet
+            Sheet sheet=workbook.getSheet(0);
+            //3:获取数据
+            lines = sheet.getRows();
+            for(int i=0;i<sheet.getRows();i++)
+            {
+                for(int j=0;j<sheet.getColumns();j++){
+                    Cell cell=sheet.getCell(j,i);
+//                    System.out.print(cell.getContents()+" ");
+                    temp[i][j] = cell.getContents();
+                }
+                System.out.println();
+            }
+            
+            //最后一步：关闭资源
+            workbook.close();
+            
+//            for(int i=0;i<6;i++)
+//            {
+//                for(int j=0;j<temp[0].length;j++)
+//                {
+//          
+//                   System.out.print( temp[i][j]+" ");
+//                }        
+//                System.out.println();
+//            }
+		
+			}
+            catch(Exception se)
+			{
+                se.printStackTrace();
+            }
+            
+	    Connection conn = null;
+        Statement stat = null;
+        
+        try{
+            // 注册 JDBC 驱动
+            Class.forName(JDBC_DRIVER);
+        
+            // 打开链接
+            System.out.println("连接数据库...");
+            conn = DriverManager.getConnection(DB_URL,USER,PASS);
+
+            
+            stat = conn.createStatement();	
+
+           String tablename = "customlist";
+//           stat.executeUpdate("DROP TABLE "+tablename);
+           
+           stat.executeUpdate("create table IF NOT EXISTS "+tablename+" "
+           		+ "(id int not null,name varchar(80), phone varchar(20),addr varchar(80),  "
+           		+ "city varchar(20), state varchar(20), zip varchar(20) ,"
+           		+ "tax varchar(20), note varchar(250))");
+
+//           int i= 1;
+           for(int i =161; i<lines;i++)
+           stat.executeUpdate(AddET9(tablename,Integer.parseInt(temp[i][0]),temp[i][1],
+        		   temp[i][2],temp[i][3],temp[i][4],temp[i][5],temp[i][6],temp[i][7],
+        		   temp[i][8])  );
+
+
+				
+            System.out.println(" copy down.");
+   
+        }catch(SQLException se){
+            // 处理 JDBC 错误
+            se.printStackTrace();
+        }catch(Exception e){
+            // 处理 Class.forName 错误
+            e.printStackTrace();
+        }finally{
+            // 关闭资源
+            try{
+                if(stat!=null) stat.close();
+            }catch(SQLException se2){
+            }// 什么都不做
+            try{
+                if(conn!=null) conn.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
+        System.out.println("Goodbye!");
+        
+       
+        
+        
+        
+        
+        
+	}    
+   
+        
+
+		
+	public void Read2()  
 	{
     		
 		try 
@@ -154,8 +268,6 @@ public class rd_sql
         System.out.println("Goodbye!");
         
 	    }
-		
-		
 		
 
 }
