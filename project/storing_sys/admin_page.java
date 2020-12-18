@@ -1,3 +1,4 @@
+//A interface to revise the info for table inventoryList
 package javaGui;
 
 import java.awt.BorderLayout;
