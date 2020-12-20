@@ -1,0 +1,15 @@
+https://cuiqingcai.com/1485.html
+给个叫 user 的 授权  密码是  password
+
+CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
+
+GRANT ALL PRIVILEGES ON *.* TO 'username'@'localhost' WITH GRANT OPTION;
+
+CREATE USER 'username'@'%' IDENTIFIED BY 'password';
+
+GRANT ALL PRIVILEGES ON *.* TO 'username'@'%' WITH GRANT OPTION;
+
+
+远程端 登录 (rt是主机的ip地址)
+mysql -u username -p -h rt
+password
