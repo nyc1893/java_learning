@@ -10,6 +10,8 @@ CREATE USER 'username'@'%' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON *.* TO 'username'@'%' WITH GRANT OPTION;
 
 
-远程端 登录 (rt是主机的ip地址)
+远程端 登录 (rt是主机的ip地址)  查自己主机ip：   
+ipconfig
 mysql -u username -p -h rt
 password
+
