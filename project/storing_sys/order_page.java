@@ -1,5 +1,3 @@
-// interface for custom ordering
-
 package javaGui;
 
 import java.awt.BorderLayout;
@@ -50,7 +48,7 @@ public class order_page extends JFrame {
 	Connection connection = null;
 	private JPanel contentPane;
 	private JTable table;
-	private JTextField textField;
+	private JTextField textFieldSearch;
 	private JTextField textFieldQty;
 	private JTable table_1;
 	private JLabel lblNumber;
@@ -265,15 +263,10 @@ public class order_page extends JFrame {
 		btnPrint.setBounds(546, 434, 93, 23);
 		contentPane.add(btnPrint);
 		
-		JLabel lblNewLabel = new JLabel("Customer Information");
-		lblNewLabel.setFont(new Font("Times New Roman", Font.BOLD, 18));
-		lblNewLabel.setBounds(56, 10, 195, 61);
-		contentPane.add(lblNewLabel);
-		
-		textField = new JTextField();
-		textField.setBounds(261, 31, 392, 52);
-		contentPane.add(textField);
-		textField.setColumns(10);
+		textFieldSearch = new JTextField();
+		textFieldSearch.setBounds(73, 85, 271, 32);
+		contentPane.add(textFieldSearch);
+		textFieldSearch.setColumns(10);
 		
 		JButton btnLoad = new JButton("Load");
 		btnLoad.addActionListener(new ActionListener() {
@@ -311,10 +304,6 @@ public class order_page extends JFrame {
 		});
 		btnLoad.setBounds(378, 392, 93, 23);
 		contentPane.add(btnLoad);
-		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(56, 91, 93, 23);
-		contentPane.add(comboBox);
 		
 		JScrollPane scrollPane = new JScrollPane();
 
@@ -400,6 +389,65 @@ public class order_page extends JFrame {
 		
 		table_1 = new JTable();
 		scrollPane_1.setViewportView(table_1);
+		
+		JButton btnSearch = new JButton("Search(EN)");
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+
+					String string1 = (textFieldSearch.getText().trim().isEmpty())?("'%'")
+							:( "'%"+textFieldSearch.getText() + "%'");
+					
+					String query = "select * from InventoryList"
+							+ " WHERE en_name LIKE "
+							+ string1;
+					System.out.println(query);
+					PreparedStatement pst= connection.prepareStatement(query);
+					ResultSet rs = pst.executeQuery();
+					//get all information to display
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+					pst.close();
+					rs.close();
+					
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+										
+				
+				
+			}
+		});
+		btnSearch.setBounds(377, 85, 117, 23);
+		contentPane.add(btnSearch);
+		
+		JButton btnSearchcn = new JButton("Search(CN)");
+		btnSearchcn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+
+					String string1 = (textFieldSearch.getText().trim().isEmpty())?("'%'")
+							:( "'%"+textFieldSearch.getText() + "%'");
+					
+					String query = "select * from InventoryList"
+							+ " WHERE ch_name LIKE "
+							+ string1;
+					System.out.println(query);
+					PreparedStatement pst= connection.prepareStatement(query);
+					ResultSet rs = pst.executeQuery();
+					//get all information to display
+					table.setModel(DbUtils.resultSetToTableModel(rs));
+					pst.close();
+					rs.close();
+					
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+											
+				
+			}
+		});
+		btnSearchcn.setBounds(377, 115, 117, 23);
+		contentPane.add(btnSearchcn);
 		table_1.addMouseListener(new MouseAdapter() {
 			@Override 
 			// the remove one item
