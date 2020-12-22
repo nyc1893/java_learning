@@ -367,12 +367,28 @@ public class custom_page extends JFrame {
 		textFieldQty.setBounds(343, 277, 66, 21);
 		panel_1.add(textFieldQty);
 		textFieldQty.setColumns(10);
+		textFieldQty.setText("1");
 		
 		JButton btnNewButton_1 = new JButton("Add");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				try {
+					String query= "insert into temporder(id,qty) "
+							+ "values ("+String.valueOf(temp)
+							+ ", "+textFieldQty.getText()
+							+" )";
+						PreparedStatement pst= connection.prepareStatement(query);
+						pst.execute();
+						pst.close();
+					}
 				
+				 catch (Exception e2) {
+					e2.printStackTrace();
+				}				
+
+				
+				refreshTable2();
 			}
 		});
 		btnNewButton_1.setBounds(343, 329, 93, 23);
@@ -581,9 +597,45 @@ public class custom_page extends JFrame {
 		btnNewButton_1_5_1.setBounds(572, 453, 117, 23);
 		panel_1.add(btnNewButton_1_5_1);
 		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(434, 34, 224, 126);
+		panel_1.add(scrollPane_2);
+		
 		table_3 = new JTable();
-		table_3.setBounds(466, 54, 207, 126);
-		panel_1.add(table_3);
+		table_3.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+  				try {
+//					System.out.println("Hi");
+					int row = table_3.getSelectedRow();
+					String EID = (table_3.getModel().getValueAt(row,0)).toString();
+					System.out.println(EID);
+					String query= "select * from temporder where id = '"+EID +"' ";
+					PreparedStatement pst= connection.prepareStatement(query);
+
+					ResultSet rs = pst.executeQuery();
+					while(rs.next())
+					{
+						
+						temp=rs.getString("id").toString().toCharArray();
+				
+					}
+					pst.close();
+					System.out.println(temp);
+
+				} 
+				catch (Exception e2) 
+				{
+					e2.printStackTrace();				
+				}
+								
+				
+				
+				
+			}
+		});
+		scrollPane_2.setViewportView(table_3);
 		refreshTable();
 		refreshTable2();
 		refreshTable3();
