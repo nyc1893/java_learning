@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -369,29 +370,78 @@ public class custom_page extends JFrame {
 		textFieldQty.setColumns(10);
 		textFieldQty.setText("1");
 		
-		JButton btnNewButton_1 = new JButton("Add");
+		JButton btnNewButton_1 = new JButton(">");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				try {
-					String query= "insert into temporder(id,qty) "
-							+ "values ("+String.valueOf(temp)
-							+ ", "+textFieldQty.getText()
-							+" )";
-						PreparedStatement pst= connection.prepareStatement(query);
-						pst.execute();
-						pst.close();
-					}
-				
-				 catch (Exception e2) {
-					e2.printStackTrace();
-				}				
+				String query= "select *  from temporder where id = '"+ String.valueOf(temp) +"' ";
+				PreparedStatement pst= connection.prepareStatement(query);
+				ResultSet rt = pst.executeQuery();
+				if(rt.next())
+				{
+					 String tt =""; 
+					 	try {
+						//1 读  数值  
+						String sql2= "select *  from temporder where id = '"+ String.valueOf(temp) +"' ";
+						 pst= connection.prepareStatement(sql2);
+						 ResultSet rs = pst.executeQuery();
+						
+							 while(rs.next())
+							{
+								tt =  (rs.getString("qty"));
+							}						 
 
+						pst.close();
+		
+						} 
+						catch (Exception e2) 
+						{
+							e2.printStackTrace();				
+						}					
+										
+						try {
+							// 2. update
+
+						
+						String sql2= "update temporder set id = '"+ String.valueOf(temp) 
+								+"' , qty = '" + String.valueOf((Integer.valueOf(tt).intValue()+ Integer.valueOf(textFieldQty.getText()).intValue()))
+								 +"' where id = "+ String.valueOf(temp);
+						 pst= connection.prepareStatement(sql2);
+						 System.out.println(sql2);
+						 pst.execute();
+						pst.close();
+		
+						} 
+						catch (Exception e2) 
+						{
+							e2.printStackTrace();				
+						}		
+				}
+				else {
 				
+					try {
+							String sql= "insert into temporder(id,qty) "
+									+ "values ("+String.valueOf(temp)
+									+ ", "+textFieldQty.getText()
+									+" )";
+							    pst= connection.prepareStatement(sql);
+								pst.execute();
+								pst.close();
+							}
+						
+						 catch (Exception e2) {
+							e2.printStackTrace();
+						}				
+					}
+				}
+				 catch (Exception e2) {
+						e2.printStackTrace();
+					}		
 				refreshTable2();
 			}
 		});
-		btnNewButton_1.setBounds(343, 329, 93, 23);
+		btnNewButton_1.setBounds(343, 329, 54, 21);
 		panel_1.add(btnNewButton_1);
 		
 		JButton btnNewButton_1_1 = new JButton("Refresh");
@@ -423,8 +473,29 @@ public class custom_page extends JFrame {
 		btnNewButton_1_1.setBounds(343, 372, 93, 23);
 		panel_1.add(btnNewButton_1_1);
 		
-		JButton btnNewButton_1_2 = new JButton("Remove");
-		btnNewButton_1_2.setBounds(343, 413, 93, 23);
+		JButton btnNewButton_1_2 = new JButton("<");
+		btnNewButton_1_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+
+				try {
+
+					String sql2= "DELETE from temporder where id = '"+ String.valueOf(temp) +"' ";
+					PreparedStatement pst= connection.prepareStatement(sql2);
+					 pst= connection.prepareStatement(sql2);
+					System.out.println(sql2);
+					pst.execute();
+					pst.close();
+	
+				} 
+				catch (Exception e2) 
+				{
+					e2.printStackTrace();				
+				}					
+  				refreshTable2();				
+			}
+		});
+		btnNewButton_1_2.setBounds(343, 413, 54, 23);
 		panel_1.add(btnNewButton_1_2);
 		
 		textFieldSearch2 = new JTextField();
@@ -500,12 +571,73 @@ public class custom_page extends JFrame {
 		btnNewButton_1_4.setBounds(259, 78, 93, 23);
 		panel_1.add(btnNewButton_1_4);
 		
-		JButton btnNewButton_1_2_1 = new JButton("Remove ALL");
-		btnNewButton_1_2_1.setBounds(343, 453, 93, 23);
+		JButton btnNewButton_1_2_1 = new JButton("<<");
+		btnNewButton_1_2_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					
+					String query= "Truncate Table temporder";
+
+						PreparedStatement pst= connection.prepareStatement(query);
+
+//						System.out.println(query);	
+
+						pst.execute();
+						JOptionPane.showMessageDialog(null, "Selection Table Cleared");
+						pst.close();
+					}
+				
+				 catch (Exception e2) {
+					e2.printStackTrace();
+				}
+				refreshTable2();				
+				
+				
+			}
+		});
+		btnNewButton_1_2_1.setBounds(343, 453, 54, 23);
 		panel_1.add(btnNewButton_1_2_1);
 		
 		JButton btnNewButton_1_5 = new JButton("Preview");
-		btnNewButton_1_5.setBounds(466, 453, 75, 23);
+		btnNewButton_1_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+				String sql2= "select  tb1.ch_name as ch,tb2.qty as qty, "
+						+ "tb1.en_name as en, tb1.taxable as tax,tb1.price as price, "
+						+ "tb1.Units as unit " 
+						+ "from temporder as tb2 "
+						+ "left join InventoryList as tb1 on tb1.inv_id = tb2.id";
+
+					PreparedStatement pst= connection.prepareStatement(sql2);
+//					System.out.println(sql2);
+					
+					ResultSet rs = pst.executeQuery();
+					int index = 0;
+					while(rs.next())
+					{
+						System.out.print(rs.getString("en") + " ");
+						System.out.print(rs.getString("price") + " ");
+						System.out.print(rs.getString("unit") + " ");
+						System.out.print(rs.getString("ch") + " ");
+						System.out.print(rs.getString("qty") + " ");
+						System.out.print(rs.getString("tax") + " ");
+						index++;
+						
+						System.out.println("");
+				
+					}
+					System.out.print("Total item:"+index );
+					pst.close();				
+					rs.close();				
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+										
+				
+				
+			}
+		});
+		btnNewButton_1_5.setBounds(422, 453, 82, 23);
 		panel_1.add(btnNewButton_1_5);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
@@ -559,20 +691,20 @@ public class custom_page extends JFrame {
 		
 		textFieldCh_name = new JTextField();
 		textFieldCh_name.setColumns(10);
-		textFieldCh_name.setBounds(523, 250, 156, 18);
+		textFieldCh_name.setBounds(523, 278, 156, 18);
 		panel_1.add(textFieldCh_name);
 		
 		textFieldEn_name = new JTextField();
 		textFieldEn_name.setColumns(10);
-		textFieldEn_name.setBounds(523, 278, 156, 60);
+		textFieldEn_name.setBounds(343, 207, 336, 21);
 		panel_1.add(textFieldEn_name);
 		
 		JLabel lblNewLabel_4_1 = new JLabel("CH_name");
-		lblNewLabel_4_1.setBounds(466, 252, 54, 15);
+		lblNewLabel_4_1.setBounds(450, 280, 54, 15);
 		panel_1.add(lblNewLabel_4_1);
 		
 		JLabel lblNewLabel_4_1_1 = new JLabel("EN_name");
-		lblNewLabel_4_1_1.setBounds(466, 280, 54, 15);
+		lblNewLabel_4_1_1.setBounds(343, 186, 54, 15);
 		panel_1.add(lblNewLabel_4_1_1);
 		
 		JLabel lblNewLabel_4_1_1_1 = new JLabel("Price");
@@ -594,7 +726,7 @@ public class custom_page extends JFrame {
 		panel_1.add(textFieldTaxable);
 		
 		JButton btnNewButton_1_5_1 = new JButton("Generate Order");
-		btnNewButton_1_5_1.setBounds(572, 453, 117, 23);
+		btnNewButton_1_5_1.setBounds(523, 453, 117, 23);
 		panel_1.add(btnNewButton_1_5_1);
 		
 		JScrollPane scrollPane_2 = new JScrollPane();
