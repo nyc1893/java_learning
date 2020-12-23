@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -44,7 +45,8 @@ public class custom_page extends JFrame {
 	private JTextField textFieldZip;
 	String tableC = "customlist";
 	char temp[] = new char [100];
-	char temp2[][] = new char [10][100];
+	String temp2[] = new String [10];
+//	char temp2[][] = new char [10][100];
 	private JTextField textFieldCh_name;
 	private JTextField textFieldEn_name;
 	private JTextField textFieldPrice;
@@ -192,25 +194,40 @@ public class custom_page extends JFrame {
 					while(rs.next())
 					{
 
-						temp2[1] = (rs.getString("name")).toString().toCharArray();
-						temp2[6] = (rs.getString("phone")).toString().toCharArray();
+						temp2[1] = (rs.getString("name"));
+						temp2[6] = (rs.getString("phone"));
   						
-  						temp2[2] = (rs.getString("addr")).toString().toCharArray();
-  						temp2[3] = (rs.getString("city")).toString().toCharArray();	
-  						temp2[4] = (rs.getString("state")).toString().toCharArray();
-  						temp2[5] = (rs.getString("zip")).toString().toCharArray();  	 						
-  						temp2[7] = (rs.getString("tax")).toString().toCharArray();
+  						temp2[2] = (rs.getString("addr"));
+  						temp2[3] = (rs.getString("city"));
+  						temp2[4] = (rs.getString("state"));
+  						temp2[5] = (rs.getString("zip"));					
+  						temp2[7] = (rs.getString("tax"));
+												
+						
+						
+						
+//						temp2[1] = (rs.getString("name")).toString().toCharArray();
+//						temp2[6] = (rs.getString("phone")).toString().toCharArray();
+//  						
+//  						temp2[2] = (rs.getString("addr")).toString().toCharArray();
+//  						temp2[3] = (rs.getString("city")).toString().toCharArray();	
+//  						temp2[4] = (rs.getString("state")).toString().toCharArray();
+//  						temp2[5] = (rs.getString("zip")).toString().toCharArray();  	 						
+//  						temp2[7] = (rs.getString("tax")).toString().toCharArray();
 						
 					}				
 				
 					pst.close();
 					rs.close();
-					for(int i = 1; i<8;i++)
+//					for(int i = 1; i<8;i++)
+//					{
+//			
+//						System.out.println(String.valueOf(temp2[i]));
+//					}
+					for(String word: temp2)
 					{
-			
-						System.out.println(String.valueOf(temp2[i]));
+						System.out.println(word);
 					}
-					
 					
 					
 				} catch (Exception e2) {
@@ -610,23 +627,37 @@ public class custom_page extends JFrame {
 
 					PreparedStatement pst= connection.prepareStatement(sql2);
 //					System.out.println(sql2);
-					
+					ArrayList<String[]> arr = new ArrayList<>();
 					ResultSet rs = pst.executeQuery();
 					int index = 0;
 					while(rs.next())
 					{
+						String tt[] = new String[6]; 
 						System.out.print(rs.getString("en") + " ");
 						System.out.print(rs.getString("price") + " ");
 						System.out.print(rs.getString("unit") + " ");
 						System.out.print(rs.getString("ch") + " ");
 						System.out.print(rs.getString("qty") + " ");
 						System.out.print(rs.getString("tax") + " ");
+						
+						
+						
+						tt[0] = rs.getString("qty");
+						tt[1] = rs.getString("unit");
+						tt[2] = rs.getString("en");
+						tt[3] = rs.getString("price");
+						tt[4] = rs.getString("tax");
+						tt[5] = rs.getString("ch");
 						index++;
 						
 						System.out.println("");
-				
+						 arr.add(tt);
+						 
 					}
-					System.out.print("Total item:"+index );
+					String goods [][] = (String[][])arr.toArray(new String[0][]);
+					
+					Preview.top( temp2,goods);
+//					System.out.print("Total item:"+index );
 					pst.close();				
 					rs.close();				
 				} catch (Exception e2) {
