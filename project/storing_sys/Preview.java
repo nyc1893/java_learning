@@ -1,3 +1,5 @@
+//Generate docx 出货单 for preview
+
 package javaGui;
 
 
@@ -26,15 +28,20 @@ public class Preview {
 	
 	   public static void main(String[] args){
 
-
 	        String [] custom = {"0.0077","name","addr","city","state","zip","Phone"};
+	        String goods[][]  = {
+	        		new String[]{"11","bag","Taita", "22.00", "Yes", "太太基金"},
+	        		new String[]{"2","cs","space X", "122.24", "No", "出前一丁"},
+	        		};
+	        top( custom,goods);
+	   }
+	   
+	   
+	   
+	   
+	   public static void top(String[] custom,String [][]goods){      
 	        
 	        String [][]data1 = genadd(custom);
-
-	        String goods[][]  = {
-	        		new String[]{"11","bag","太太基金", "22.00", "Yes"},
-	        		new String[]{"2","cs","Xfdwgfr", "122.24", "No"},
-	        		};
 
 	        String [][]data2 = genitem(goods);
 	        
@@ -128,7 +135,7 @@ public class Preview {
 			   double num = qty* price;
 			   num=Double.parseDouble(myformat.format(num));
 			   
-			   String[] a = {In[i][0]+" "+In[i][1], In[i][2],"$"+In[i][3], "","$"+ Double.toString(num)} ;
+			   String[] a = {In[i][0]+" "+In[i][1], In[i][2]+" "+In[i][5],"$"+In[i][3], "","$"+ Double.toString(num)} ;
 			   arr.add(a);
 		   }
 		   
@@ -419,7 +426,7 @@ public class Preview {
 //	        table2.autoFit(AutoFitBehaviorType.Auto_Fit_To_Contents);
 	        table3.getTableFormat().getBorders().setBorderType(BorderStyle.None);
 	        //保存文档
-	        doc.saveToFile("./img/test.docx", FileFormat.Docx_2013);
+	        doc.saveToFile("./img/Preview.docx", FileFormat.Docx_2013);
 	        System.out.println("save done");
 	    }
 
