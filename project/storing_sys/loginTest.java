@@ -11,7 +11,8 @@ import java.awt.Container;
 import java.sql.*;
 import java.awt.EventQueue;
 import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;    
+import java.awt.event.ActionEvent;
+import java.awt.Font;    
 public class loginTest {
 
 	private JFrame frame;
@@ -53,11 +54,13 @@ public class loginTest {
 		frame.getContentPane().setLayout(null);
 		
 		JLabel lblNewLabel = new JLabel("User Name");
-		lblNewLabel.setBounds(96, 72, 54, 15);
+		lblNewLabel.setFont(new Font("宋体", Font.BOLD, 16));
+		lblNewLabel.setBounds(53, 60, 93, 24);
 		frame.getContentPane().add(lblNewLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("Password");
-		lblNewLabel_1.setBounds(96, 123, 54, 15);
+		lblNewLabel_1.setFont(new Font("宋体", Font.BOLD, 16));
+		lblNewLabel_1.setBounds(53, 116, 79, 15);
 		frame.getContentPane().add(lblNewLabel_1);
 		
 		textField = new JTextField();
@@ -70,27 +73,38 @@ public class loginTest {
 			public void actionPerformed(ActionEvent arg0) {
 				try
 				{
-					String query= "select * from test where id = ? and ch_name=?";
+					String query= "select * from user where name = ? and pass =?";
 					PreparedStatement pst= connection.prepareStatement(query);
 					pst.setString(1, textField.getText());
 					pst.setString(2, passwordField.getText());
 					ResultSet rs = pst.executeQuery();
-					int count =0;
-					while(rs.next())
+					
+				    query= "select * from nuser where name = ? and pass =?";
+				    pst= connection.prepareStatement(query);
+					pst.setString(1, textField.getText());
+					pst.setString(2, passwordField.getText());
+					ResultSet rt = pst.executeQuery();	
+					
+					if(rs.next())
 					{
-						count++;
+						JOptionPane.showMessageDialog(null, "You are super user");
+						System.out.println("You are super user");
+						frame.dispose();
+						 menu  abc= new menu();
+						abc.setVisible(true);
 					}
-					if(count ==1)
+					else if(rt.next())
 					{
-						JOptionPane.showMessageDialog(null, "Correct");
-					}
-					else if(count>1)
-					{
-						JOptionPane.showMessageDialog(null, "Duplicated info.");
+						JOptionPane.showMessageDialog(null, "You are normal user");
+						System.out.println("You are not super user");
+						frame.dispose();
+						 order_page  bcd= new  order_page();
+						 bcd.setVisible(true);				
+			
 					}
 					else 
 					{
-						JOptionPane.showMessageDialog(null, "input error Try Again");
+						JOptionPane.showMessageDialog(null, "Username or Password wrong");
 					}
 					rs.close();
 					pst.close();
@@ -98,7 +112,7 @@ public class loginTest {
 				
 				catch (Exception e)
 				{
-					JOptionPane.showMessageDialog(null, "Connection Success");
+					JOptionPane.showMessageDialog(null, "Connection Error");
 				}
 
 				
