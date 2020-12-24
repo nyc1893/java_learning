@@ -1,7 +1,7 @@
 //read xls file only be attenion that the int col of input file need to be non-null;
 // otherwise it will have problem
 
-//read() is to import the custom.xls data into the CustomList table;
+//read1() is to import the custom.xls data into the CustomList table;
 //read2() is to import the product.xls data into the InventoryList table;
 
 
@@ -36,28 +36,36 @@ public class rd_sql
     static final String USER = "root";
     static final String PASS = "123";
     Connection connection = null;
- 
+    int line = 0;
 //    String filename = "./data/product.xls";
     String filename = "./data/custom.xls";
-//    String temp[][] = new String [2400][8];
+    
 
-    String temp[][] = new String [410][9];
-    int lines = 0;
+
+
 	public static void main(String[] args) 
 	{
 		
 		rd_sql in = new rd_sql();
-        in.Read();
+        in.Read1();
 
 	}
 	
-    	
-    public static String AddET7(String tablename,int id, String ch1,int cnum,String ch2,
-    		String ch3, String ch4,String ch5)
+//	public static String getprice(String input) 
+//	{ 
+//		String ar[] = input.split(",");
+//		
+//		
+//		String res="";
+//		return res;
+//
+//	}   	
+    public static String Addrd2(String tablename,int id, String ch1,int cnum,String ch2,
+    		String ch3, String ch4,String ch5,String ch6)
 	{
     	String result = String.format("insert into %s values(%d,\"%s\",%d,\"%s\""
-    			+ ",\"%s\",\"%s\",\"%s\",null)",
-    			tablename,id,ch1,cnum,ch2,ch3,ch4,ch5);
+    			+ ",\"%s\",\"%s\",\"%s\",\"%s\")",
+    			tablename,id,ch1,cnum,ch2,ch3,ch4,ch5,ch6);
     	System.out.println(result);
     	return result;
 
@@ -73,27 +81,38 @@ public class rd_sql
     	return result;
 
 	}	
-    
-	public void Read()  
+
+	public void Read1()  
 	{
-    		
+		ArrayList<String[]> arr = new ArrayList<>();	
+		long s1=System.currentTimeMillis();
+		
 		try 
 		{
         //1:创建workbook
             Workbook workbook=Workbook.getWorkbook(new File(filename)); 
             //2:获取第一个工作表sheet
             Sheet sheet=workbook.getSheet(0);
+            line = sheet.getRows();
             //3:获取数据
-            lines = sheet.getRows();
-            for(int i=0;i<sheet.getRows();i++)
-            {
-                for(int j=0;j<sheet.getColumns();j++){
-                    Cell cell=sheet.getCell(j,i);
-//                    System.out.print(cell.getContents()+" ");
-                    temp[i][j] = cell.getContents();
-                }
-                System.out.println();
-            }
+
+//          3:获取数据
+          for(int i=0;i<sheet.getRows();i++)
+          {
+          	String tt[] = new String[sheet.getColumns()];
+              for(int j=0;j<sheet.getColumns();j++){
+              	
+                  Cell cell=sheet.getCell(j,i);
+//                  System.out.print(cell.getContents()+" ");
+                  tt[j] = cell.getContents();
+              }
+              arr.add(tt);
+//              System.out.println();
+          }
+//          
+            
+            
+            
             
             //最后一步：关闭资源
             workbook.close();
@@ -127,7 +146,7 @@ public class rd_sql
 
             
             stat = conn.createStatement();	
-
+            String temp [][] = (String[][])arr.toArray(new String[0][]);
            String tablename = "customlist";
 //           stat.executeUpdate("DROP TABLE "+tablename);
            
@@ -137,10 +156,10 @@ public class rd_sql
            		+ "tax varchar(20), note varchar(250))");
 
 //           int i= 1;
-           for(int i =161; i<lines;i++)
+           for(int i =1; i<line ;i++)
            stat.executeUpdate(AddET9(tablename,Integer.parseInt(temp[i][0]),temp[i][1],
         		   temp[i][2],temp[i][3],temp[i][4],temp[i][5],temp[i][6],temp[i][7],
-        		   temp[i][8])  );
+        		   temp[i][8].replace("\"", "") ) );
 
 
 				
@@ -164,9 +183,10 @@ public class rd_sql
                 se.printStackTrace();
             }
         }
-        System.out.println("Goodbye!");
         
-       
+        long s2=System.currentTimeMillis();
+        System.out.println("Runing Time = "+(s2-s1)/1000+" s");  
+        System.out.println("Goodbye!");
         
         
         
@@ -174,41 +194,39 @@ public class rd_sql
         
 	}    
    
-        
 
 		
 	public void Read2()  
 	{
-    		
+		ArrayList<String[]> arr = new ArrayList<>();	
+		long s1=System.currentTimeMillis();
 		try 
 		{
         //1:创建workbook
             Workbook workbook=Workbook.getWorkbook(new File(filename)); 
             //2:获取第一个工作表sheet
             Sheet sheet=workbook.getSheet(0);
-            //3:获取数据
+            System.out.println(sheet.getRows());
+            System.out.println(sheet.getColumns());
+            line = sheet.getRows();
+//            3:获取数据
             for(int i=0;i<sheet.getRows();i++)
             {
+            	String tt[] = new String[sheet.getColumns()];
                 for(int j=0;j<sheet.getColumns();j++){
+                	
                     Cell cell=sheet.getCell(j,i);
-                  //  System.out.print(cell.getContents()+" ");
-                    temp[i][j] = cell.getContents();
+//                    System.out.print(cell.getContents()+" ");
+                    tt[j] = cell.getContents();
                 }
-                System.out.println();
+                arr.add(tt);
+//                System.out.println();
             }
-            
+//            
             //最后一步：关闭资源
             workbook.close();
             
-            for(int i=88;i<92;i++)
-            {
-                for(int j=0;j<temp[0].length;j++)
-                {
-          
-                   System.out.print( temp[i][j]+" ");
-                }        
-                System.out.println();
-	            }
+
 			}
             catch(Exception se)
 			{
@@ -232,7 +250,7 @@ public class rd_sql
             //创建数据库hello
             
 
-           
+            String temp [][] = (String[][])arr.toArray(new String[0][]);
            
            String tablename = "InventoryList";
            stat.executeUpdate("DROP TABLE "+tablename);
@@ -241,9 +259,11 @@ public class rd_sql
            		+ "pricetime datetime  , Taxable varchar(10)  ,Units varchar(20) ,"
            		+ "price decimal(6,2)) ");
            
-           for(int i =1833; i<2400;i++)
-           stat.executeUpdate(AddET7(tablename,Integer.parseInt(temp[i][0]),temp[i][1],
-        		   Integer.parseInt(temp[i][2]),temp[i][3],"2015-09-28 11:50:36",temp[i][6],temp[i][7]
+           for(int i =1; i<line;i++)
+           stat.executeUpdate(Addrd2(tablename,Integer.parseInt(temp[i][0]),temp[i][1],
+        		   Integer.parseInt(temp[i][2]),temp[i][3],"2015-09-28 11:50:36",temp[i][6],
+        		   (temp[i][7]=="")?"ea":temp[i][7],
+        		   (temp[i][5]=="")?"0.00":temp[i][5].replace("$","").replace(",","")
         				   ));
 
    
@@ -270,6 +290,8 @@ public class rd_sql
                 se.printStackTrace();
             }
         }
+        long s2=System.currentTimeMillis();
+        System.out.println("Runing Time = "+(s2-s1)/1000+" s");  
         System.out.println("Goodbye!");
         
 	    }
