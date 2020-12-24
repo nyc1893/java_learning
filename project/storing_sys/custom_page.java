@@ -18,6 +18,9 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -42,14 +45,19 @@ public class custom_page extends JFrame {
 	private JTextField textFieldAddr;
 	private JTextField textFieldTax;
 	private JTextField textFieldZip;
-	String tableC = "customlist";
+
 	char temp[] = new char [100];
-	char temp2[][] = new char [10][100];
+	String temp2[] = new String [10];
+	String temp3 = "";
+	String total ="";
+	String Number  ="";
+//	char temp2[][] = new char [10][100];
 	private JTextField textFieldCh_name;
 	private JTextField textFieldEn_name;
 	private JTextField textFieldPrice;
 	private JTextField textFieldTaxable;
-
+	String tableC = "customlist";
+	String tableO = "orderList";
 	/**
 	 * Launch the application.
 	 */
@@ -66,7 +74,21 @@ public class custom_page extends JFrame {
 			}
 		});
 	}
-	
+	   public static String getSysTime()
+	   {
+	        SimpleDateFormat sdf = new SimpleDateFormat();// 格式化时间 
+	        
+//	        sdf.applyPattern("MM/dd/yyyy");
+	        
+	        sdf.applyPattern("yyyy-MM-dd");// a为am/pm的标记  
+	        Date date = new Date();// 获取当前时间 
+	        
+	        String shijian  = sdf.format(date);
+	        System.out.println(shijian); 
+	        return shijian;
+	   }
+	   
+	   
 	public void refreshTable3() {
 		try {
 			
@@ -191,26 +213,41 @@ public class custom_page extends JFrame {
 
 					while(rs.next())
 					{
-
-						temp2[1] = (rs.getString("name")).toString().toCharArray();
-						temp2[6] = (rs.getString("phone")).toString().toCharArray();
+						temp2[0] = (rs.getString("id"));
+						temp2[1] = (rs.getString("name"));
+						temp2[6] = (rs.getString("phone"));
   						
-  						temp2[2] = (rs.getString("addr")).toString().toCharArray();
-  						temp2[3] = (rs.getString("city")).toString().toCharArray();	
-  						temp2[4] = (rs.getString("state")).toString().toCharArray();
-  						temp2[5] = (rs.getString("zip")).toString().toCharArray();  	 						
-  						temp2[7] = (rs.getString("tax")).toString().toCharArray();
+  						temp2[2] = (rs.getString("addr"));
+  						temp2[3] = (rs.getString("city"));
+  						temp2[4] = (rs.getString("state"));
+  						temp2[5] = (rs.getString("zip"));					
+  						temp2[7] = (rs.getString("tax"));
+												
+						
+						
+						
+//						temp2[1] = (rs.getString("name")).toString().toCharArray();
+//						temp2[6] = (rs.getString("phone")).toString().toCharArray();
+//  						
+//  						temp2[2] = (rs.getString("addr")).toString().toCharArray();
+//  						temp2[3] = (rs.getString("city")).toString().toCharArray();	
+//  						temp2[4] = (rs.getString("state")).toString().toCharArray();
+//  						temp2[5] = (rs.getString("zip")).toString().toCharArray();  	 						
+//  						temp2[7] = (rs.getString("tax")).toString().toCharArray();
 						
 					}				
 				
 					pst.close();
 					rs.close();
-					for(int i = 1; i<8;i++)
+//					for(int i = 1; i<8;i++)
+//					{
+//			
+//						System.out.println(String.valueOf(temp2[i]));
+//					}
+					for(String word: temp2)
 					{
-			
-						System.out.println(String.valueOf(temp2[i]));
+						System.out.println(word);
 					}
-					
 					
 					
 				} catch (Exception e2) {
@@ -375,20 +412,69 @@ public class custom_page extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				
 				try {
-					String query= "insert into temporder(id,qty) "
-							+ "values ("+String.valueOf(temp)
-							+ ", "+textFieldQty.getText()
-							+" )";
-						PreparedStatement pst= connection.prepareStatement(query);
-						pst.execute();
-						pst.close();
-					}
-				
-				 catch (Exception e2) {
-					e2.printStackTrace();
-				}				
+				String query= "select *  from temporder where id = '"+ String.valueOf(temp) +"' ";
+				PreparedStatement pst= connection.prepareStatement(query);
+				ResultSet rt = pst.executeQuery();
+				if(rt.next())
+				{
+					 String tt =""; 
+					 	try {
+						//1 读  数值  
+						String sql2= "select *  from temporder where id = '"+ String.valueOf(temp) +"' ";
+						 pst= connection.prepareStatement(sql2);
+						 ResultSet rs = pst.executeQuery();
+						
+							 while(rs.next())
+							{
+								tt =  (rs.getString("qty"));
+							}						 
 
+						pst.close();
+		
+						} 
+						catch (Exception e2) 
+						{
+							e2.printStackTrace();				
+						}					
+										
+						try {
+							// 2. update
+
+						
+						String sql2= "update temporder set id = '"+ String.valueOf(temp) 
+								+"' , qty = '" + String.valueOf((Integer.valueOf(tt).intValue()+ Integer.valueOf(textFieldQty.getText()).intValue()))
+								 +"' where id = "+ String.valueOf(temp);
+						 pst= connection.prepareStatement(sql2);
+						 System.out.println(sql2);
+						 pst.execute();
+						pst.close();
+		
+						} 
+						catch (Exception e2) 
+						{
+							e2.printStackTrace();				
+						}		
+				}
+				else {
 				
+					try {
+							String sql= "insert into temporder(id,qty) "
+									+ "values ("+String.valueOf(temp)
+									+ ", "+textFieldQty.getText()
+									+" )";
+							    pst= connection.prepareStatement(sql);
+								pst.execute();
+								pst.close();
+							}
+						
+						 catch (Exception e2) {
+							e2.printStackTrace();
+						}				
+					}
+				}
+				 catch (Exception e2) {
+						e2.printStackTrace();
+					}		
 				refreshTable2();
 			}
 		});
@@ -427,12 +513,14 @@ public class custom_page extends JFrame {
 		JButton btnNewButton_1_2 = new JButton("<");
 		btnNewButton_1_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-  				try {
 
-					String query= "DELETE from temporder where id = '"+ String.valueOf(temp) +"' ";
-					PreparedStatement pst= connection.prepareStatement(query);
-					System.out.println(query);
+
+				try {
+
+					String sql2= "DELETE from temporder where id = '"+ String.valueOf(temp) +"' ";
+					PreparedStatement pst= connection.prepareStatement(sql2);
+					 pst= connection.prepareStatement(sql2);
+					System.out.println(sql2);
 					pst.execute();
 					pst.close();
 	
@@ -440,10 +528,8 @@ public class custom_page extends JFrame {
 				catch (Exception e2) 
 				{
 					e2.printStackTrace();				
-				}
+				}					
   				refreshTable2();				
-				
-				
 			}
 		});
 		btnNewButton_1_2.setBounds(343, 413, 54, 23);
@@ -561,23 +647,37 @@ public class custom_page extends JFrame {
 
 					PreparedStatement pst= connection.prepareStatement(sql2);
 //					System.out.println(sql2);
-					
+					ArrayList<String[]> arr = new ArrayList<>();
 					ResultSet rs = pst.executeQuery();
 					int index = 0;
 					while(rs.next())
 					{
+						String tt[] = new String[6]; 
 						System.out.print(rs.getString("en") + " ");
 						System.out.print(rs.getString("price") + " ");
 						System.out.print(rs.getString("unit") + " ");
 						System.out.print(rs.getString("ch") + " ");
 						System.out.print(rs.getString("qty") + " ");
 						System.out.print(rs.getString("tax") + " ");
+						
+						
+						
+						tt[0] = rs.getString("qty");
+						tt[1] = rs.getString("unit");
+						tt[2] = rs.getString("en");
+						tt[3] = rs.getString("price");
+						tt[4] = rs.getString("tax");
+						tt[5] = rs.getString("ch");
 						index++;
 						
 						System.out.println("");
-				
+						 arr.add(tt);
+						 
 					}
-					System.out.print("Total item:"+index );
+					String goods [][] = (String[][])arr.toArray(new String[0][]);
+					
+					Preview.top( temp2,goods);
+//					System.out.print("Total item:"+index );
 					pst.close();				
 					rs.close();				
 				} catch (Exception e2) {
@@ -677,6 +777,98 @@ public class custom_page extends JFrame {
 		panel_1.add(textFieldTaxable);
 		
 		JButton btnNewButton_1_5_1 = new JButton("Generate Order");
+		btnNewButton_1_5_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				//读个 id +1
+				try {
+					
+					String sql = "select max(id),min(id) from "+tableO
+							+ " limit 2";
+					PreparedStatement pst2= connection.prepareStatement(sql);
+
+					ResultSet rs = pst2.executeQuery();
+  					while(rs.next())
+  					{
+  						temp3=rs.getString("max(id)");
+  					}
+  					
+					pst2.close();
+//					temp2
+					
+//					id_num = Integer.parseInt(String.valueOf(temp2))+1;
+			//		System.out.println(Integer.parseInt(String.valueOf(temp2))+1);
+					
+					
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}	
+				
+				 Number = Integer.toString(Integer.parseInt(temp3)+1);
+				try {
+				String sql2= "select  tb1.ch_name as ch,tb2.qty as qty, "
+						+ "tb1.en_name as en, tb1.taxable as tax,tb1.price as price, "
+						+ "tb1.Units as unit " 
+						+ "from temporder as tb2 "
+						+ "left join InventoryList as tb1 on tb1.inv_id = tb2.id";
+
+					PreparedStatement pst= connection.prepareStatement(sql2);
+//					System.out.println(sql2);
+					ArrayList<String[]> arr = new ArrayList<>();
+					ResultSet rs = pst.executeQuery();
+					int index = 0;
+					while(rs.next())
+					{
+						String tt[] = new String[6]; 
+							
+						tt[0] = rs.getString("qty");
+						tt[1] = rs.getString("unit");
+						tt[2] = rs.getString("en");
+						tt[3] = rs.getString("price");
+						tt[4] = rs.getString("tax");
+						tt[5] = rs.getString("ch");
+						index++;
+						
+						System.out.println("");
+						 arr.add(tt);
+						 
+					}
+					String goods [][] = (String[][])arr.toArray(new String[0][]);
+					
+					 total = GenOrder.top( temp2,goods, Number);
+					System.out.print("Total :"+total );
+					pst.close();				
+					rs.close();				
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}				
+				
+				//add 一个记录 到  invoicelist
+
+				try {
+					
+					String query= "insert into "+ tableO
+							+"(id,cid,price,orderdate) "
+							+ "values (?,?,?,?)";
+					PreparedStatement pst= connection.prepareStatement(query);
+					
+					pst.setString(1, Number);
+					pst.setString(2, temp2[0]);
+					pst.setString(3, total);
+					pst.setString(4, getSysTime());
+
+					pst.execute();
+
+					JOptionPane.showMessageDialog(null, "Data Saved");
+					
+					
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}					
+			}
+
+			
+		});
 		btnNewButton_1_5_1.setBounds(523, 453, 117, 23);
 		panel_1.add(btnNewButton_1_5_1);
 		
