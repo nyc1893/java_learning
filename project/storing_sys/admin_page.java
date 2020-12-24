@@ -1,4 +1,3 @@
-//A interface to revise the info for table inventoryList
 package javaGui;
 
 import java.awt.BorderLayout;
@@ -24,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.Color;
 
 public class admin_page extends JFrame {
 	Connection connection = null;
@@ -41,9 +41,16 @@ public class admin_page extends JFrame {
 	private JLabel lblNewLabel_6;
 	private JTextField textFieldID;
 	private JScrollPane scrollPane;
-	private JLabel lblNewLabel_7;
 	char temp2[] = new char [20];
 	int id_num = 0;
+	String EID = "";
+	private JTextField textFieldSearch;
+	private JButton btnSearch;
+	private JButton btnSearchch;
+	private JLabel lblNewLabel_7;
+	private JButton btnNewButton_1;
+	private JLabel lblNewLabel_8;
+	private JLabel lblNewLabel_9;
 	/**
 	 * Launch the application.
 	 */
@@ -67,8 +74,14 @@ public class admin_page extends JFrame {
 	
 	public void refreshTable() {
 		try {
-			String query= "select inv_id,en_name,CATEGORY,ch_name,price"
-					+ " from InventoryList";
+			String query= 					
+					"select tb1.inv_id as ID, "
+					+ "tb1.en_name as En_name, "
+					+ "tb2.chcate as class, "
+					+"tb1.ch_name as CH_name, "
+					+ "tb1.price as price "
+					+"from InventoryList as tb1 "
+					+ "left join catelist as tb2 on tb1.CATEGORY = tb2.cateid";	
 
 			PreparedStatement pst= connection.prepareStatement(query);
 			ResultSet rs = pst.executeQuery();
@@ -145,26 +158,10 @@ public class admin_page extends JFrame {
 		JButton btnNewButton = new JButton("Load");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					String query= "select inv_id,en_name,CATEGORY,ch_name,price"
-							+ " from InventoryList";
-					
-				
-					
-					PreparedStatement pst= connection.prepareStatement(query);
-					ResultSet rs = pst.executeQuery();
-					//get all information to display
-					table_1.setModel(DbUtils.resultSetToTableModel(rs));
-					pst.close();
-					rs.close();
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 				refreshTable();
 			}
 		});
-		btnNewButton.setBounds(53, 540, 93, 23);
+		btnNewButton.setBounds(662, 507, 93, 23);
 		contentPane.add(btnNewButton);
 		
 		btnAdd = new JButton("ADD");
@@ -205,7 +202,7 @@ public class admin_page extends JFrame {
 					pst.setString(2, textFielden.getText());
 					pst.setString(3, textFieldcate.getText());
 					pst.setString(4, textFieldcn.getText());
-					pst.setString(5, "2020-12-20 12:14");
+					pst.setString(5, custom_page.getSysTime());
 					pst.setString(6, textFieldtax.getText());
 					pst.setString(7, textFieldunit.getText());
 					pst.setString(8, textFieldprice.getText());
@@ -226,7 +223,7 @@ public class admin_page extends JFrame {
 		});
 		btnAdd.setBounds(53, 474, 93, 23);
 		contentPane.add(btnAdd);
-		a
+		
 		btnUpdate = new JButton("UPDATE");
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -235,7 +232,7 @@ public class admin_page extends JFrame {
 							+ ", ch_name='"+ textFieldcn.getText() + "', en_name='"+ textFielden.getText()
 							+ "', Taxable='"+ textFieldtax.getText() + "', Units='"+ textFieldunit.getText()
 							+ "', price="+ textFieldprice.getText() + ", CATEGORY='"+ textFieldcate.getText()
-				
+							+ "', pricetime="+ custom_page.getSysTime()
 							+"' where inv_id = "+textFieldID.getText()+" ";
 					PreparedStatement pst= connection.prepareStatement(query);
 			
@@ -283,22 +280,119 @@ public class admin_page extends JFrame {
 		contentPane.add(textFieldID);
 		
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(294, 208, 452, 393);
+		scrollPane.setBounds(294, 221, 452, 277);
 		contentPane.add(scrollPane);
 		
 		table_1 = new JTable();
 		scrollPane.setViewportView(table_1);
 		
-		lblNewLabel_7 = new JLabel("To New or change Product Items");
-		lblNewLabel_7.setFont(new Font("Tahoma", Font.BOLD, 24));
-		lblNewLabel_7.setBounds(345, 10, 421, 56);
+		textFieldSearch = new JTextField();
+		textFieldSearch.setColumns(10);
+		textFieldSearch.setBounds(164, 48, 358, 36);
+		contentPane.add(textFieldSearch);
+		
+		btnSearch = new JButton("Search(EN)");
+		btnSearch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+
+					String string1 = (textFieldSearch.getText().trim().isEmpty())?("'%'")
+							:( "'%"+textFieldSearch.getText() + "%'");
+					
+					String query = "select * from InventoryList"
+							+ " WHERE en_name LIKE "
+							+ string1;
+					System.out.println(query);
+					PreparedStatement pst= connection.prepareStatement(query);
+					ResultSet rs = pst.executeQuery();
+					//get all information to display
+					table_1.setModel(DbUtils.resultSetToTableModel(rs));
+					pst.close();
+					rs.close();
+					
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+				
+			}
+		});
+		btnSearch.setBounds(530, 31, 101, 30);
+		contentPane.add(btnSearch);
+		
+		btnSearchch = new JButton("Search(CH)");
+		btnSearchch.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+
+					String string1 = (textFieldSearch.getText().trim().isEmpty())?("'%'")
+							:( "'%"+textFieldSearch.getText() + "%'");
+					
+					String query = "select * from InventoryList"
+							+ " WHERE ch_name LIKE "
+							+ string1;
+					System.out.println(query);
+					PreparedStatement pst= connection.prepareStatement(query);
+					ResultSet rs = pst.executeQuery();
+					//get all information to display
+					table_1.setModel(DbUtils.resultSetToTableModel(rs));
+					pst.close();
+					rs.close();
+					
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+								
+				
+			}
+		});
+		btnSearchch.setBounds(530, 71, 101, 30);
+		contentPane.add(btnSearchch);
+		
+		lblNewLabel_7 = new JLabel("EDIT Production");
+		lblNewLabel_7.setFont(new Font("Arial Black", Font.BOLD, 16));
+		lblNewLabel_7.setBounds(22, 10, 199, 21);
 		contentPane.add(lblNewLabel_7);
+		
+		btnNewButton_1 = new JButton("REMOVE");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+  				try {
+
+					String query= "DELETE from InventoryList where inv_id = "+ EID;
+					PreparedStatement pst= connection.prepareStatement(query);
+					System.out.println(query);
+					pst.execute();
+					pst.close();
+	
+				} 
+				catch (Exception e2) 
+				{
+					e2.printStackTrace();				
+				}
+  				refreshTable() ;
+				
+			}
+		});
+		btnNewButton_1.setForeground(Color.RED);
+		btnNewButton_1.setBackground(Color.WHITE);
+		btnNewButton_1.setBounds(53, 550, 93, 23);
+		contentPane.add(btnNewButton_1);
+		
+		lblNewLabel_8 = new JLabel("100->\u852C\u83DC  200->\u51B0\u51BB\u98DF\u54C1  300->\u5E72\u8D27  400->\u996E\u6599  ");
+		lblNewLabel_8.setBounds(267, 562, 446, 44);
+		contentPane.add(lblNewLabel_8);
+		
+		lblNewLabel_9 = new JLabel(" 500->\u96F6\u98DF  600->\u8C03\u5473\u6599  700->\u65E5\u7528\u54C1  800->\u5176\u4ED6");
+		lblNewLabel_9.setBounds(265, 599, 296, 44);
+		contentPane.add(lblNewLabel_9);
 		table_1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
   				try {
   					int row = table_1.getSelectedRow();
-  					String EID = (table_1.getModel().getValueAt(row,0)).toString();
+  				    EID = (table_1.getModel().getValueAt(row,0)).toString();
   					System.out.println(EID);
   					String query= "select * from InventoryList where inv_id = '"+EID +"' ";
   					PreparedStatement pst= connection.prepareStatement(query);
